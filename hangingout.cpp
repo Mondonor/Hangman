@@ -1,13 +1,11 @@
 #include <iostream>
 #include <string>
-#include <cstring>
 #include <fstream>
-#include <vector>
-#include <ctime>
-#include <stdlib.h>
+//#include <stdlib.h>
+
 using namespace std;
 
-int wrong = 6;
+int wrong = 0;
 int r;
 int j;
 string head = " ";
@@ -19,6 +17,9 @@ string leg2 = " ";
 string word;
 string lastLine = "";
 string guess;
+bool status = true;
+int correctGuesses = 0;
+bool guesstemp;
 
 int chooseWord(){
     srand(time(NULL));
@@ -35,20 +36,13 @@ int chooseWord(){
                 word = tp;
                 break;
             }
-            //cout << tp << "\n";
             j += 1;
         }
-        //cout << "Nice";
         myfile.close();
     }  
 
     for(int z = 1; z < word.length(); z++){
-        //cout << lastLine
         lastLine.append("_ ");
-        
-        //cout << "\n";
-        //cout << z;
-        //cout << "\n";
     }
 
     return 0;
@@ -62,6 +56,15 @@ int initialize(){
     leg1 = " ";
     leg2 = " ";
     return 0;
+}
+
+int checkIfRight(){
+    for(int z = 0; z < lastLine.length(); z++){
+        if(lastLine[z] == '_'){
+            return false;
+        }
+    }
+    return true;
 }
 
 int gameboard()
@@ -98,23 +101,47 @@ int gameboard()
     cout << "     |  | \n";
     cout << "     " + head + "  | \n";
     cout << "    " + arm1 + body + arm2 + " | \n";
-    cout << "     " + leg1 + leg2 + " | \n";
+    cout << "    " + leg1 + " " + leg2 + " | \n";
     cout << "       _|_\n";
     cout << "          \n";
     cout << lastLine + "\n";
-    cout << word + "\n";
+
     if(wrong == 6){
         cout << "GAME OVER\n";
-        exit;
-    }
+        cout << "The word was: ";
+        cout << word;
+        cout << "\n";
+        status = false;
+    } 
+    if(checkIfRight()){
+        cout << "YOU WIN!\n";
+        status = false;
+    };
     return 0;
 }
 
 
 int main(){
-    cout << "Take your guess!";
-    cin >> guess;
     chooseWord();
     gameboard();
+    while(status == true){
+        cout << "\nTake Your Guess: ";
+        cin >> guess;
+        for(int z = 0; z < word.length(); z++){
+            if(word[z] == guess[0]){
+                lastLine[2*z] = word[z];
+                guesstemp = true;
+            }
+        }
+        if(guesstemp == true){
+            correctGuesses += 1;
+            guesstemp = false;
+        } else {
+            wrong += 1;
+        }
+        guesstemp = false;
+        gameboard();
+    }
+    //cout << "Reached end";
     return 0;
 }
